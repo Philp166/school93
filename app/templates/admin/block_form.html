@@ -1,0 +1,38 @@
+<div class="bf">
+<button type="button" class="bf__x" data-close aria-label="Закрыть">×</button>
+{% if movable %}<div class="bf__tools"><button type="button" class="x" data-move="up" title="Выше">↑</button><button type="button" class="x" data-move="down" title="Ниже">↓</button>{% if not fixed %}<button type="button" class="a-btn a-btn--danger a-btn--sm" data-del-block>Удалить блок</button>{% endif %}</div>{% endif %}
+<h3>{{ name }}</h3>
+{% if locked %}
+ <div class="lockbox"><p>Это общий блок. Он берёт данные из раздела админки и меняется там. Правка сразу появится на всех страницах, где этот блок есть.</p><a class="a-btn" id="lockGo" href="#" target="_top">Перейти в раздел</a></div>
+{% elif not spec %}
+ <p class="mut">Этот блок не редактируется.</p>
+{% else %}
+<form class="form bf__form" data-url="{{ url }}" data-path="{{ path }}"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="url" value="{{ url }}"><input type="hidden" name="path" value="{{ path }}">
+{% for f in spec %}{% set key, label, kind = f[0], f[1], f[2] %}{% set extra = f[3] if f|length > 3 else '' %}
+ {% if kind == 'input' %}<label class="f"><span class="f__l">{{ label }}</span><input name="f_{{ key }}" value="{{ blk[key] or '' }}">{% if extra %}<span class="f__h">{{ extra }}</span>{% endif %}</label>
+ {% elif kind == 'textarea' %}<label class="f"><span class="f__l">{{ label }}</span><textarea name="f_{{ key }}" rows="3">{{ blk[key] or '' }}</textarea>{% if extra %}<span class="f__h">{{ extra }}</span>{% endif %}</label>
+ {% elif kind == 'lines' %}<label class="f"><span class="f__l">{{ label }}</span><textarea name="f_{{ key }}" rows="3">{{ (blk[key] or [])|join('\n') }}</textarea>{% if extra %}<span class="f__h">{{ extra }}</span>{% endif %}</label>
+ {% elif kind == 'paras' %}<label class="f"><span class="f__l">{{ label }}</span><textarea name="f_{{ key }}" rows="8">{{ (blk[key] or [])|join('\n\n') }}</textarea>{% if extra %}<span class="f__h">{{ extra }}</span>{% endif %}</label>
+ {% elif kind == 'tablabels' %}<span class="f__l">{{ label }}</span><div class="rows" data-rows>{% for tab in blk.tabs %}<div class="rowi"><input name="tl" value="{{ tab.label if tab is mapping else tab[0] }}"><input type="hidden" name="tk" value="{{ tab.key if tab is mapping else '' }}"><input type="hidden" name="ti" value="{{ loop.index0 }}"><button type="button" class="x" data-del aria-label="Удалить вкладку" title="Удалить вкладку вместе с её блоками">×</button></div>{% endfor %}</div><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить вкладку</button>{% if extra %}<span class="f__h" style="display:block;margin-top:8px">{{ extra }}</span>{% endif %}
+ {% elif kind == 'choice' %}<label class="f"><span class="f__l">{{ label }}</span><select name="f_{{ key }}">{% for r in rubrics %}<option{% if blk[key] == r %} selected{% endif %}>{{ r }}</option>{% endfor %}</select></label>
+ {% elif kind == 'number' %}<label class="f"><span class="f__l">{{ label }}</span><input type="number" min="1" max="24" name="f_{{ key }}" value="{{ blk[key] or 3 }}"></label>
+ {% elif kind == 'dict' %}<span class="f__l">{{ label }}</span>{% for k in extra['keys'] %}<label class="f"><span class="f__h">{{ k }}</span><input name="d_{{ key }}_{{ loop.index0 }}" value="{{ (blk[key] or {}).get(k, '') }}"></label>{% endfor %}
+ {% elif kind == 'rows' %}{% set cols = extra['cols'] %}<span class="f__l">{{ label }}</span>
+  <div class="rows rows--b" data-rows>{% for row in (blk[key] or [[]]) %}<div class="rowi rowb">
+   {% for c in cols %}{% set v = row[loop.index0] if row|length > loop.index0 else '' %}<label class="f"><span class="f__h">{{ c[0] }}</span>
+    {% if c[1] == 'textarea' %}<textarea name="r_{{ key }}_{{ loop.index0 }}" rows="2">{{ v }}</textarea>
+    {% elif c[1] == 'lines' %}<textarea name="r_{{ key }}_{{ loop.index0 }}" rows="4">{{ (v or [])|join('\n') if v is not string else v }}</textarea>
+    {% elif c[1] == 'select' %}<select name="r_{{ key }}_{{ loop.index0 }}">{% for ov, ot in c[2] %}<option value="{{ ov }}"{% if ov == v %} selected{% endif %}>{{ ot }}</option>{% endfor %}</select>
+    {% else %}<input name="r_{{ key }}_{{ loop.index0 }}" value="{{ v }}">{% endif %}</label>{% endfor %}
+   <div class="rowb__act">{% if not extra.get('fixed') %}<button type="button" class="x" data-up aria-label="Выше">↑</button><button type="button" class="x" data-down aria-label="Ниже">↓</button><button type="button" class="x" data-del aria-label="Удалить">×</button>{% else %}<button type="button" class="x" data-up aria-label="Выше">↑</button><button type="button" class="x" data-down aria-label="Ниже">↓</button>{% endif %}</div>
+  </div>{% endfor %}</div>{% if not extra.get('fixed') %}<button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить</button>{% endif %}
+ {% endif %}
+{% endfor %}
+{% if t in ('cards', 'phones') %}<label class="f"><span class="f__l">Колонок</span><select name="f_cols">{% for n in (1, 2, 3) %}<option value="{{ n }}"{% if (blk.cols or 3) == n %} selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>{% endif %}
+<div class="bf__save"><button class="a-btn" type="submit">Сохранить</button><button class="a-btn a-btn--ghost" type="button" data-close>Отмена</button></div>
+</form>
+{% if edited or history %}<div class="bf__hist">
+ {% if history %}<p class="f__l" style="margin-top:14px">Прежние версии</p>{% for h in history %}<div class="hist-row"><span>{{ h.updated|dh }} {{ h.updated[11:16] }}, {{ h.user }}</span><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-revert="{{ h.id }}" data-ask="Вернуть эту версию блока?">Вернуть</button></div>{% endfor %}{% endif %}
+</div>{% endif %}
+{% endif %}
+</div>

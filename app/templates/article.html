@@ -1,0 +1,9 @@
+<div class="art">
+<div class="art__head"><p class="art__meta">{{ n.rubric }}, {{ n.date_h }}</p><h1 class="art__h1 h1-{{ size }}">{{ n.title }}</h1></div>
+{% if n.cover %}<button class="art__cover" data-lb="0" aria-label="Открыть фото"><span class="art__bg" style="background-image:url({{ n.cover }})"></span><img src="{{ n.cover }}" alt=""></button>{% endif %}
+<div class="prose art__text">{{ body_html|safe }}</div>
+{% if gallery %}<div class="art__gal">{% for g in gallery %}<button class="art__ph" data-lb="{{ loop.index if n.cover else loop.index0 }}" aria-label="Открыть фото"><img src="{{ g }}" alt="" loading="lazy"></button>{% endfor %}</div>{% endif %}
+{% if n.vk %}<div class="btns" style="margin-top:28px"><a class="btn btn--ghost" href="{{ n.vk|safeurl }}" target="_blank" rel="noopener">Все фото в альбоме ВКонтакте</a></div>{% endif %}
+<div class="btns art__back"><a class="btn btn--ghost" href="/novosti">Все новости</a></div>
+</div>
+{% if photos %}<div class="lbx" id="lbx" hidden data-photos='{{ photos|tojson|forceescape }}'><button class="lbx__x" aria-label="Закрыть">×</button><button class="lbx__p" aria-label="Предыдущее фото">‹</button><img alt=""><button class="lbx__n" aria-label="Следующее фото">›</button><span class="lbx__c"></span></div>{% endif %}

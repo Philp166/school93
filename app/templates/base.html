@@ -1,0 +1,73 @@
+{% import "blocks.html" as b %}<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ p.title }}{% if p.url != "/" %} | {% endif %}Школа №93 Пушкинского района</title>
+<meta name="description" content="{{ p.lead|striptags|truncate(160) }}">
+<meta name="theme-color" content="{{ '#069676' if p.k else '#1654E8' }}">
+<link rel="icon" href="/static/img/logo93.svg">
+<link rel="stylesheet" href="/static/css/fonts.css">
+<link rel="stylesheet" href="/static/css/vars.css"><link rel="stylesheet" href="/static/css/site.css"><link rel="stylesheet" href="/static/css/site2.css">
+</head><body>
+{% set LOGO %}{% include "logo.svg" %}{% endset %}
+<div class="bar" id="bar"><a href="/" class="logo" aria-label="На главную"><span class="logo__m">{{ LOGO }}</span></a>
+ <nav class="nav" aria-label="Разделы">{% for key, name, href in NAV %}<a href="{{ href|safeurl }}"{% if key == 'kvantorium' %} class="k"{% endif %}>{{ name }}</a>{% endfor %}</nav>
+ <div class="hbtns"><button class="rbtn js-a11y" aria-label="Настройки доступности">Aa</button><button class="rbtn burger js-burger" aria-label="Меню" aria-expanded="false"><i></i><i></i></button></div></div>
+
+<nav class="menu" id="menu" aria-hidden="true"><div class="menu__in wrap"><div class="mcols">
+{% for name, href, items in MENU %}<div class="mcol{% if name == 'Кванториум' %} k{% endif %}"><h4><a href="{{ href|safeurl }}">{{ name }}</a></h4><ul>{% for t, h in items %}<li><a href="{{ h|safeurl }}">{{ t }}</a></li>{% endfor %}</ul></div>{% endfor %}
+</div><div class="mfoot"><a class="btn" href="/o-shkole/kontakty">Связаться со школой</a>{% for bld in C.buildings %}<span>{{ bld.address }}: {{ bld.phone }}</span>{% endfor %}</div></div></nav>
+
+<div class="a11y" id="a11y" role="dialog" aria-label="Настройки доступности"><h4>Размер текста</h4><div class="row" data-g="fs"><button class="on" data-v="">A</button><button data-v="fs1">A+</button><button data-v="fs2">A++</button></div><h4>Контраст</h4><div class="row" data-g="hc"><button class="on" data-v="">Обычный</button><button data-v="hc">Высокий</button></div><h4>Шрифт</h4><div class="row" data-g="ff"><button class="on" data-v="">Без засечек</button><button data-v="ff-serif">С засечками</button></div><h4>Интервал между буквами</h4><div class="row" data-g="ls"><button class="on" data-v="">Обычный</button><button data-v="ls1">Увеличенный</button></div><h4>Изображения</h4><div class="row" data-g="img"><button class="on" data-v="">Показывать</button><button data-v="noimg">Скрыть</button></div><p>Настройки сохраняются в этом браузере.</p></div>
+
+<main>
+<section class="hero {{ 'hero--main' if p.main else 'hero--page' }}{% if p.article %} hero--art{% endif %}{% if p.k %} k-scope{% endif %}">
+ {% if p.obj and not card_html %}<img class="o3d o-big" src="/static/img/obj/{{ p.obj }}.webp" alt="">{% endif %}
+ {% if p.k %}<div class="kgrid"></div>{% endif %}
+ <header class="hdr wrap">
+  <a href="/" class="logo" aria-label="Школа №93, на главную"><span class="logo__m">{{ LOGO }}</span><span class="logo__t"><b>Школа №93</b>Пушкинский район, Шушары</span></a>
+  <nav class="nav glass" aria-label="Основные разделы">{% for key, name, href in NAV %}<a href="{{ href|safeurl }}"{% if key == 'kvantorium' %} class="k"{% endif %}{% if key == nav_cur %} aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}</nav>
+  <div class="hbtns"><button class="rbtn js-a11y" aria-label="Настройки доступности">Aa</button><button class="rbtn burger js-burger" aria-label="Меню" aria-expanded="false"><i></i><i></i></button></div>
+ </header>
+ <div class="hero__in wrap">
+  <div class="hero__l"{% if edit %} data-eb="1" data-path="hero" data-t="hero"{% endif %}>
+   {% if p.main %}<div class="pre">ГБОУ школа №93 Пушкинского района Санкт-Петербурга</div>
+   {% else %}<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a>{% for t, h in crumbs %} <span>/</span> {% if h %}<a href="{{ h|safeurl }}">{{ t }}</a>{% else %}<span>{{ t }}</span>{% endif %}{% endfor %}</nav>{% endif %}
+   {% if not p.article %}<h1{% if edit %} data-f="h1" data-multi="1"{% endif %}>{% for l in p.h1 %}<span class="ln"><span>{{ l }}</span></span>{% endfor %}</h1>
+   {% if p.lead or edit %}<p class="lead"{% if edit %} data-f="lead" data-ph="Подзаголовок"{% endif %}>{{ p.lead or '' }}</p>{% endif %}{% endif %}
+   {% if p.ktabs %}<nav class="ktabs glass" aria-label="Разделы Кванториума">{% for t, h in p.ktabs %}<a href="{{ h|safeurl }}"{% if loop.first %} class="on"{% endif %}>{{ t }}</a>{% endfor %}</nav>{% endif %}
+   {% if p.buttons %}<div class="btns">{% for t, h, s in p.buttons %}<a class="btn{% if s %} btn--{{ s }}{% endif %}" href="{{ h|safeurl }}"{% if h.startswith('http') %} target="_blank" rel="noopener"{% endif %}>{{ t }}</a>{% endfor %}</div>{% endif %}
+  </div>
+  {{ card_html|safe }}
+ </div>
+</section>
+
+{% if p.sveden %}
+<section class="sec light z3"><div class="wrap"><div class="sv">
+ <nav class="sv-nav" aria-label="Подразделы">{% for slug, name in SVEDEN %}<a href="/sveden/{{ slug }}"{% if slug == p.sveden %} class="on" aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}</nav>
+ <div>{% for i, blk in groups[0][1] %}{{ ctx.block(blk, 'blocks.' ~ i) }}{% endfor %}<p class="sm mut" style="margin-top:28px">Раздел обновлён {{ ctx.updated }}.</p></div>
+</div></div></section>
+{% elif article_html %}
+<section class="sec light z3"><div class="wrap">{{ article_html|safe }}</div></section>
+{% else %}
+{% for kind, blks in groups %}{% if kind == 'kv' %}{{ ctx.block(blks[0][1], 'blocks.' ~ blks[0][0], 'kv_promo') }}{% else %}
+<section class="sec light {{ 'z3' if loop.first else 'z1' }}"><div class="wrap">
+{% for i, blk in blks %}{{ ctx.block(blk, 'blocks.' ~ i) }}{% endfor %}
+</div></section>{% endif %}{% endfor %}
+{% endif %}
+</main>
+
+<footer class="sfoot{% if p.k %} k{% endif %}"><div class="wrap">
+<div class="fgrid">
+ <div class="faddr"><a href="/" class="logo"><span class="logo__m">{{ LOGO }}</span><span class="logo__t"><b>ГБОУ школа №93</b>Пушкинского района Санкт-Петербурга</span></a>
+  {% for bld in C.buildings %}<div><b>{{ bld.address }}</b><span>Секретарь: {{ bld.phone }}</span></div>{% endfor %}
+  <div><span>{{ C.email }}<br>{{ C.hours }}</span></div></div>
+ <div><h4>Поступление и учёба</h4><ul><li><a href="/postuplenie/1-klass">Приём в 1 класс</a></li><li><a href="/postuplenie/perevod">Перевод во 2–9 классы</a></li><li><a href="/postuplenie/10-klass">Приём в 10 класс</a></li><li><a href="/ucheba/raspisanie">Расписание</a></li><li><a href="/ucheba/dnevnik">Электронный дневник</a></li></ul></div>
+ <div><h4>Родителям</h4><ul><li><a href="/roditelyam/pitanie">Питание</a></li><li><a href="/roditelyam/sluzhby">Помощь и службы</a></li><li><a href="/roditelyam/bezopasnost">Безопасность</a></li><li><a href="/roditelyam/telefony-doveriya">Телефоны доверия</a></li><li><a href="/zhizn/kruzhki">Кружки и секции</a></li></ul></div>
+ <div><h4>О школе</h4><ul><li><a href="/o-shkole/administratsiya">Администрация</a></li><li><a href="/o-shkole/kontakty">Контакты</a></li><li><a href="/kvantorium">Кванториум</a></li><li><a href="/novosti">Новости</a></li><li><a href="/pedagogam">Педагогам</a></li><li><a href="/sveden/common">Сведения об образовательной организации</a></li></ul></div>
+</div>
+<div class="pos glass">{% include "gu.svg" %}<div class="pos__t"><h3>Есть вопрос или жалоба?</h3><p>Напишите через Госуслуги: обращение попадёт к администрации школы, ответ придёт в личный кабинет.</p></div>{% if C.pos_widget %}{{ C.pos_widget|safe }}{% else %}<a class="btn btn--on" href="https://pos.gosuslugi.ru/" target="_blank" rel="noopener">Написать обращение</a>{% endif %}</div>
+<div class="fb"><span>© ГБОУ школа №93 Пушкинского района Санкт-Петербурга</span><a href="/sveden/common">Сведения об образовательной организации</a><a href="#" class="js-a11y-link">Доступность</a><a class="r" href="/karta-sayta">Карта сайта</a></div>
+</div></footer>
+<script src="/static/js/site.js"></script>
+{% if edit %}<link rel="stylesheet" href="/static/css/edit.css"><script src="/static/js/edit.js"></script>{% endif %}
+</body></html>

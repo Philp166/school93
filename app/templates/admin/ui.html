@@ -1,0 +1,10 @@
+{% macro field(name, label, value='', hint='', type='text', required=False, attrs='', wide=False) %}<label class="f{{ ' f--wide' if wide }}"><span class="f__l">{{ label }}{% if required %} <i>обязательно</i>{% endif %}</span>
+{% if type == 'textarea' %}<textarea name="{{ name }}" {{ attrs|safe }}{% if required %} required{% endif %}>{{ value or '' }}</textarea>
+{% else %}<input type="{{ type }}" name="{{ name }}" value="{{ value if value is not none else '' }}" {{ attrs|safe }}{% if required %} required{% endif %}>{% endif %}
+{% if hint %}<span class="f__h">{{ hint }}</span>{% endif %}</label>{% endmacro %}
+
+{% macro select(name, label, options, value='', hint='') %}<label class="f"><span class="f__l">{{ label }}</span><select name="{{ name }}">{% for o in options %}{% set v = o[0] if o is not string else o %}{% set t = o[1] if o is not string else o %}<option value="{{ v }}"{% if v == value %} selected{% endif %}>{{ t }}</option>{% endfor %}</select>{% if hint %}<span class="f__h">{{ hint }}</span>{% endif %}</label>{% endmacro %}
+
+{% macro savebar(delete_label='', view=False) %}<div class="savebar"><div class="savebar__in"><span class="dirty-note">Есть несохранённые изменения</span><div class="savebar__b">{% if delete_label %}<button class="a-btn a-btn--danger" name="delete" value="1" formnovalidate data-confirm="{{ delete_label }}">Удалить</button>{% endif %}{% if view %}<button class="a-btn a-btn--ghost" name="view" value="1">Сохранить и открыть на сайте</button>{% endif %}<button class="a-btn">Сохранить</button></div></div></div>{% endmacro %}
+
+{% macro routes(key) %}<div class="routes"><span>Где появится на сайте:</span>{% for t, h in ROUTES.get(key, []) %}{% if h %}<a href="{{ h }}" target="_blank">{{ t }}</a>{% else %}<b>{{ t }}</b>{% endif %}{% endfor %}</div>{% endmacro %}

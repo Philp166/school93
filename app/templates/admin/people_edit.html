@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}{{ x.name or 'Новый человек' }}{% endblock %}{% block h1 %}{{ x.name or 'Новый человек' }}{% endblock %}
+{% block sub %}<a class="back" href="/admin/people">Все люди</a>{% endblock %}
+{% block body %}
+<form method="post" enctype="multipart/form-data" class="form js-dirty"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="photo_old" value="{{ x.photo or '' }}">
+<div class="panel"><div class="person-a">
+ <div class="upl upl--ava" data-preview>{% if x.photo %}<img src="{{ x.photo }}" alt="">{% endif %}<label class="drop"><input type="file" name="photo" accept="image/*"><span><b>Фото</b><br>необязательно</span></label>{% if x.photo %}<label class="chk"><input type="checkbox" name="photo_remove" value="1"> Убрать</label>{% endif %}</div>
+ <div style="flex:1">
+ {{ ui.field('name', 'Фамилия, имя, отчество', x.name, required=True, wide=True) }}
+ <div class="row2">{{ ui.field('position', 'Должность', x.position, 'Например: Заместитель директора по УВР') }}{{ ui.field('duty', 'Чем занимается, одной строкой', x.duty, 'Например: расписание, зачисление и перевод') }}</div>
+ <div class="row3">{{ ui.field('phone', 'Телефон', x.phone, '(812) 611-13-09', type='tel') }}{{ ui.field('email', 'Почта', x.email, type='email') }}{{ ui.select('building', 'Корпус', [('', 'Не указан'), ('Школьная, 19', 'Школьная, 19'), ('Первомайская, 30', 'Первомайская, 30')], x.building) }}</div>
+ </div></div></div>
+<div class="panel"><h3>Сейчас на сайте</h3>{% if usage %}<div class="list">{% for url, ptitle, bid, btitle in usage %}<a class="li li--link" href="/admin/pages/edit?url={{ url|urlencode }}&sel={{ ('b:' ~ bid if bid != 'card' else 'card')|urlencode }}"><div class="li__m"><b>{{ ptitle }}</b><span class="mut">{{ url }}{% if btitle %}, блок «{{ btitle }}»{% endif %}</span></div></a>{% endfor %}</div>{% else %}<p class="mut">Пока нигде не стоит. Добавить на страницу: откройте страницу в разделе «Страницы», нажмите на блок «Люди» и выберите человека из базы.</p>{% endif %}</div>
+<details class="panel"{% if x.edu or x.qual or x.subjects %} open{% endif %}><summary>Для таблицы «Педагогический состав» в «Сведениях»</summary><p class="mut sm" style="margin:10px 0 14px">Закон требует показывать образование, квалификацию и стаж каждого педагога. Для остальных сотрудников заполнять не нужно.</p><div>
+ {{ ui.field('subjects', 'Преподаваемые предметы', x.subjects, wide=True) }}<div class="row3">{{ ui.field('edu', 'Образование', x.edu) }}{{ ui.field('qual', 'Квалификация', x.qual) }}{{ ui.field('experience', 'Стаж', x.experience) }}</div></div></details>
+{{ ui.savebar(('Удалить «' ~ (x.name or '') ~ '» из базы' ~ (' и с ' ~ usage|length ~ ' мест на сайте' if usage else '') ~ '?') if x.id else '') }}
+</form>{% endblock %}

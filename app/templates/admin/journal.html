@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block title %}Журнал{% endblock %}{% block h1 %}Журнал изменений{% endblock %}
+{% block sub %}<p class="mut">Кто, что и когда менял. Хранятся последние 300 записей.</p>{% endblock %}
+{% block body %}<div class="list">{% for j in rows %}<div class="li"><div><b>{{ j.user }}</b> {{ j.action }} <span class="mut">в разделе «{{ j.section }}»</span>{% if j.what %}: {{ j.what }}{% endif %}</div><span class="mut">{{ j.at }}</span></div>{% else %}<div class="empty">Пока пусто.</div>{% endfor %}</div>{% endblock %}

@@ -1,0 +1,9 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход | Школа №93</title><link rel="stylesheet" href="/static/css/fonts.css"><link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="login"><div class="login__box login__box--wide">
+<img src="/static/img/logo93.svg" alt="" class="login__logo"><h1>Сохраните резервные коды</h1>
+<p class="mut">Если телефон потеряется или сломается, войти можно по одному из этих кодов. Каждый срабатывает один раз. Запишите их или сфотографируйте и храните отдельно от телефона. Больше они не покажутся.</p>
+<div class="codes">{% for c in codes %}<code>{{ c }}</code>{% endfor %}</div>
+<button class="a-btn a-btn--ghost" type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText('{{ codes|join(' ') }}');this.textContent='Скопировано'" style="width:100%;margin-bottom:10px">Скопировать коды</button>
+<a class="a-btn" href="/admin/pages" style="width:100%">Я сохранил коды, перейти в админку</a>
+</div></body></html>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Вакансии{% endblock %}{% block h1 %}Вакансии{% endblock %}
+{% block sub %}{{ ui.routes('vacancies') }}{% endblock %}
+{% block body %}
+<form method="post" class="form panel"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="act" value="add">
+<h3>Добавить вакансию</h3><div class="row3">{{ ui.field('title', 'Должность', '', required=True) }}{{ ui.select('building', 'Корпус', [('', 'Оба корпуса'), ('Школьная, 19', 'Школьная, 19'), ('Первомайская, 30', 'Первомайская, 30')]) }}{{ ui.field('contact', 'Контакт', '', 'Необязательно: телефон или почта') }}</div>
+<button class="a-btn">Добавить</button></form>
+<div class="list">{% for v in rows %}<div class="li"><div class="li__m"><b>{{ v.title }}</b><span class="mut">{{ v.building or 'Оба корпуса' }}{% if v.contact %}, {{ v.contact }}{% endif %}</span></div>
+<form method="post" class="inl"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="id" value="{{ v.id }}"><input type="hidden" name="title" value="{{ v.title }}">
+<button class="switch-b{{ ' on' if v.active }}" name="act" value="toggle" title="Показывать на сайте">{{ 'На сайте' if v.active else 'Скрыта' }}</button>
+<button class="a-btn a-btn--ghost a-btn--sm" name="act" value="delete" data-confirm="Удалить вакансию «{{ v.title }}»?">Удалить</button></form></div>{% else %}<div class="empty">Вакансий нет.</div>{% endfor %}</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+[Unit]
+Description=Сайт школы 93
+After=network.target
+
+[Service]
+User=school93
+WorkingDirectory=/opt/school93
+ExecStart=/opt/school93/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2 --proxy-headers
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+Environment=TZ=Europe/Moscow
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход | Школа №93</title><link rel="stylesheet" href="/static/css/fonts.css"><link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="login"><form class="login__box" method="post" action="/admin/login/code">
+<img src="/static/img/logo93.svg" alt="" class="login__logo">
+{% if rec %}<h1>Резервный код</h1><p class="mut">{{ name }}, введите один из резервных кодов, которые вы сохранили при подключении приложения. Каждый код срабатывает один раз.</p>
+{% else %}<h1>Код из приложения</h1><p class="mut">{{ name }}, откройте приложение-ключ на телефоне и введите шесть цифр для «Школа 93».</p>{% endif %}
+{% if err == 'locked' %}<div class="alert">Слишком много попыток. Попробуйте через 15 минут.</div>{% elif err %}<div class="alert">Код не подошёл. Проверьте, что время на телефоне выставлено автоматически.</div>{% endif %}
+<input type="hidden" name="rec" value="{{ '1' if rec }}">
+<label class="f"><span class="f__l">{{ 'Резервный код' if rec else 'Код' }}</span><input name="code" class="codein" {% if rec %}placeholder="abcd-ef12"{% else %}inputmode="numeric" pattern="[0-9 ]*" maxlength="7" placeholder="000 000"{% endif %} autocomplete="one-time-code" required autofocus></label>
+<button class="a-btn" style="width:100%">Войти</button>
+<p class="sm" style="margin-top:16px;text-align:center">{% if rec %}<a href="/admin/login/code">Ввести код из приложения</a>{% else %}<a href="/admin/login/code?rec=1">Нет телефона под рукой? Резервный код</a>{% endif %}</p>
+</form></body></html>

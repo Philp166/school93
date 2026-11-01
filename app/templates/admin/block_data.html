@@ -1,0 +1,18 @@
+<div class="bf" data-kind="{{ 'people' if t in ('people', 'card_people') else t }}">
+<button type="button" class="bf__x" data-close aria-label="Закрыть">×</button>
+{% if movable %}<div class="bf__tools"><button type="button" class="x" data-move="up" title="Выше">↑</button><button type="button" class="x" data-move="down" title="Ниже">↓</button>{% if not fixed %}<button type="button" class="a-btn a-btn--danger a-btn--sm" data-del-block>Удалить блок</button>{% endif %}</div>{% endif %}
+<h3>{{ name }}</h3>
+<form class="form bf__form bf__data" data-url="{{ url }}" data-path="{{ path }}" data-limit="{{ blk.limit or '' }}">
+<input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="url" value="{{ url }}"><input type="hidden" name="path" value="{{ path }}">
+<script type="application/json" class="bf__json">{{ data_json|safe }}</script>
+{% if t != 'clubs' %}<label class="f"><span class="f__l">Заголовок блока</span><input data-k="title" value="{{ blk.title or '' }}" placeholder="Необязательно"></label>{% endif %}
+{% if t == 'people' and not blk.limit %}<label class="f"><span class="f__l">Как показывать</span><select data-k="view">{% for k, v in views.items() if k not in ('director', 'inline') %}<option value="{{ k }}"{% if (blk.view or 'grid') == k %} selected{% endif %}>{{ v }}</option>{% endfor %}</select></label>{% endif %}
+{% if t == 'people' and blk.view == 'service' %}<label class="f"><span class="f__l">Как называть специалистов</span><input data-k="word" value="{{ (blk.word or ['специалист','специалиста','специалистов'])|join(', ') }}"><span class="f__h">Три формы через запятую: психолог, психолога, психологов</span></label>{% endif %}
+{% if t == 'clubs' %}<label class="f"><span class="switch"><input type="checkbox" data-k="auto" value="1"{% if blk.auto %} checked{% endif %}><i></i><em>Показывать все кружки из базы</em></span><span class="f__h">Новый кружок из раздела «Кружки» появится здесь сам. Выключите, чтобы выбрать кружки вручную.</span></label>{% endif %}
+{% if blk.limit %}<p class="mut sm">Здесь может стоять только один человек. Выбор нового заменит текущего.</p>{% endif %}
+<div class="dgroups"></div>
+{% if t in ('people', 'docs') and not blk.limit %}<button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add-group>Добавить группу</button>{% endif %}
+<div class="bf__save"><button class="a-btn" type="submit">Сохранить</button><button class="a-btn a-btn--ghost" type="button" data-close>Отмена</button></div>
+</form>
+{% if history %}<div class="bf__hist"><p class="f__l">Прежние версии</p>{% for h in history %}<div class="hist-row"><span>{{ h.updated|dh }} {{ h.updated[11:16] }}, {{ h.user }}</span><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-revert="{{ h.id }}" data-ask="Вернуть эту версию блока?">Вернуть</button></div>{% endfor %}</div>{% endif %}
+</div>

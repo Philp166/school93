@@ -1,0 +1,13 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход | Школа №93</title><link rel="stylesheet" href="/static/css/fonts.css"><link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="login"><form class="login__box login__box--wide" method="post" action="/admin/login/setup">
+<img src="/static/img/logo93.svg" alt="" class="login__logo"><h1>Подключите приложение-ключ</h1>
+<p class="mut">{{ name }}, теперь вход подтверждается кодом из телефона. Это нужно один раз, займёт минуту. Номер телефона и почта не нужны.</p>
+{% if err == 'locked' %}<div class="alert">Слишком много попыток. Попробуйте через 15 минут.</div>{% elif err %}<div class="alert">Код не подошёл. Проверьте, что время на телефоне выставлено автоматически, и введите новый код.</div>{% endif %}
+<ol class="setup">
+ <li><b>Установите на телефон приложение-ключ</b>Подойдёт любое: «Яндекс Ключ», Google Authenticator или Microsoft Authenticator. Если уже стоит, переходите ко второму шагу.</li>
+ <li><b>Отсканируйте код в приложении</b>В приложении нажмите «+» или «Добавить аккаунт» и наведите камеру.<div class="qr">{{ qr|safe }}</div><span class="mut sm">Не сканируется? Добавьте вручную ключ:</span><code class="key">{{ key }}</code></li>
+ <li><b>Введите шесть цифр</b>Их покажет приложение напротив «Школа 93». Код меняется каждые 30 секунд.<label class="f" style="margin-top:10px"><input name="code" class="codein" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" placeholder="000 000" autocomplete="one-time-code" required></label></li>
+</ol>
+<button class="a-btn" style="width:100%">Подключить и войти</button>
+</form></body></html>

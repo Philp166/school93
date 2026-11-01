@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}Люди{% endblock %}{% block h1 %}Люди{% endblock %}
+{% block sub %}<p class="mut">База сотрудников. На страницы они ставятся в редакторе страниц, в блоках «Люди».</p>{% endblock %}{% block actions %}<a class="a-btn" href="/admin/people/new">Добавить человека</a>{% endblock %}
+{% block body %}
+<form class="filters" method="get"><input name="q" value="{{ qs }}" placeholder="ФИО, должность или корпус"><label class="chk"><input type="checkbox" name="unused" value="1"{% if only_unused %} checked{% endif %} onchange="this.form.submit()"> Нигде не стоят ({{ unused }})</label><button class="a-btn a-btn--ghost">Найти</button></form>
+<div class="list">{% for x in rows %}<a class="li li--link" href="/admin/people/{{ x.id }}">{% if x.photo %}<img src="{{ x.photo }}" class="li__ava" alt="">{% else %}<span class="li__ava">{{ x.name.split()[:2]|map('first')|join }}</span>{% endif %}<div class="li__m"><b>{{ x.name }}</b><span class="mut">{{ x.position }}{% if x.building %}, {{ x.building }}{% endif %}, {% if x.used %}на сайте: {{ x.used }}{% else %}<em class="badge">нигде не стоит</em>{% endif %}</span></div></a>{% else %}<div class="empty">Никого не найдено.</div>{% endfor %}</div>
+{% endblock %}

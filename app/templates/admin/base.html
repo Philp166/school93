@@ -1,0 +1,38 @@
+{% import "ui.html" as ui with context %}<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}Админка{% endblock %} | Школа №93</title>
+<link rel="icon" href="/static/img/logo93.svg">
+<link rel="stylesheet" href="/static/css/fonts.css">
+<link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="{% block bodycls %}{% endblock %}">
+<header class="tbar">
+ <a class="tbar__brand" href="/admin/pages"><img src="/static/img/logo93.svg" alt=""><span>Админка</span></a>
+ <div class="tbar__mid">{% block topmid %}<span class="tbar__title">{% block h1top %}{% endblock %}</span>{% endblock %}</div>
+ <div class="tbar__act">{% block topact %}{% endblock %}
+  <div class="umenu"><button class="umenu__b" aria-label="Меню пользователя">{{ (u.name or 'A')[:1] }}</button><div class="umenu__m"><span>{{ u.name }}</span><a href="/admin/me">Мой профиль</a><a href="/" target="_blank">Открыть сайт</a><a href="/admin/logout">Выйти</a></div></div>
+ </div>
+</header>
+<nav class="rail" aria-label="Разделы">
+ {% set I = {
+  'pages':'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  'news':'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h6M7 13h10"/>',
+  'people':'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+  'docs':'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>',
+  'clubs':'<circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/>',
+  'food':'<path d="M6 3v8a3 3 0 0 0 6 0V3M9 3v18M17 3c-2 2-2 6 0 8v10"/>',
+  'admission':'<path d="M4 7h16M4 12h16M4 17h10"/>',
+  'contacts':'<path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A17 17 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  'more':'<circle cx="12" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'} %}
+ {% for key, name, sep in [('pages','Страницы',0),('news','Новости',1),('people','Люди',0),('docs','Документы',0),('clubs','Кружки',1),('food','Питание',0),('admission','Приём',0),('contacts','Контакты',1)] %}
+ <a href="/admin/{{ key }}" class="{{ 'on' if section == key }}"><svg viewBox="0 0 24 24">{{ I[key]|safe }}</svg>{{ name }}</a>{% if sep %}<hr>{% endif %}{% endfor %}
+ <div class="rail__more"><button class="{{ 'on' if section in ('vacancies','journal','users') }}"><svg viewBox="0 0 24 24">{{ I['more']|safe }}</svg>Ещё</button>
+  <div class="rail__pop"><a href="/admin/vacancies">Вакансии</a><a href="/admin/journal">Журнал изменений</a>{% if u.role == 'admin' %}<a href="/admin/users">Пользователи</a>{% endif %}</div></div>
+</nav>
+<main class="main">
+ {% block mainhead %}<header class="top"><div><h1>{% block h1 %}{% endblock %}</h1>{% block sub %}{% endblock %}</div><div class="top__act">{% block actions %}{% endblock %}</div></header>{% endblock %}
+ {% block body %}{% endblock %}
+</main>
+{% if ok %}<div class="toast on" id="toast">{{ {'saved':'Сохранено. Изменения уже на сайте.','deleted':'Удалено.','exists':'Такой логин уже есть.','badimg':'Не сохранилось: файл не картинка, повреждён или больше 25 МБ.','baddate':'Не сохранилось: неверная дата меню.','shortpw':'Пароль должен быть не короче 8 символов.','badrole':'Неизвестная роль пользователя.','badurl':'Не сохранилось: ссылка должна начинаться с https:// или /','badold':'Текущий пароль неверный.','mismatch':'Новые пароли не совпадают.','badcode':'Код из приложения не подошёл.','pw':'Пароль изменён.','reccode':'Вы вошли по резервному коду. Если телефон потерян, попросите администратора сбросить ключ.','reset2fa':'Ключ сброшен. При следующем входе человек подключит его заново.','lastadmin':'Нельзя: на сайте должен остаться хотя бы один администратор.','badlogin':'Укажите имя и логин латиницей.','added':'Пользователь добавлен.','newpw':'Новый пароль выдан.'}.get(ok, 'Готово.' if not ok.startswith(('up','bulk')) else ('Загружено файлов: ' + ok[2:] if ok.startswith('up') else 'Добавлено документов: ' + ok[4:])) }}</div>{% endif %}
+<script>window.CSRF="{{ u.csrf }}";</script>
+<script src="/static/js/admin.js"></script>
+</body></html>

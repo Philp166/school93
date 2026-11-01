@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block title %}Приём{% endblock %}{% block h1 %}Приём{% endblock %}
+{% block sub %}{{ ui.routes('admission') }}{% endblock %}
+{% block body %}
+<form method="post" class="form js-dirty"><input type="hidden" name="csrf" value="{{ u.csrf }}">
+<div class="panel"><h3>Приём в 1 класс</h3>
+ <div class="seg-a">{% for v, t, h in [('soon','Скоро','На главной и на странице будет дата открытия'),('open','Идёт','Появится кнопка «Подать заявление»'),('closed','Закрыт','Появится текст «куда обратиться, если мест нет»')] %}<label class="seg-a__i"><input type="radio" name="status1" value="{{ v }}"{% if A.status1 == v %} checked{% endif %}><b>{{ t }}</b><span>{{ h }}</span></label>{% endfor %}</div>
+ <div class="row3">{{ ui.field('year1', 'Учебный год', A.year1, 'Например: 2027/28') }}{{ ui.field('open_date', 'Дата открытия приёма', A.open_date, 'Например: 1 апреля') }}</div>
+ <p class="f__h" style="margin:-4px 0 14px">Объявление на главной собирается само из статуса, года и даты: «Приём в 1 класс на {{ A.year1 }} учебный год откроется {{ A.open_date }}».</p>
+ {{ ui.field('soon_text', 'Текст, пока приём не начался', A.soon_text, type='textarea', attrs='rows="2"', wide=True) }}
+ {{ ui.field('open_text', 'Текст, когда приём идёт', A.open_text, type='textarea', attrs='rows="2"', wide=True) }}
+ {{ ui.field('closed_text', 'Текст, когда мест нет', A.closed_text, 'Куда обратиться: соседние школы, отдел образования', type='textarea', attrs='rows="3"', wide=True) }}
+</div>
+<div class="panel"><h3>Приём в 10 класс</h3>
+ <div class="row3">{{ ui.field('year10', 'Учебный год', A.year10) }}{{ ui.field('classes10', 'Число 10 классов', A.classes10, type='number') }}{{ ui.field('seats10', 'Мест в классе', A.seats10, type='number') }}</div>
+ <span class="f__l">Сроки подачи документов</span><div class="rows" data-rows>{% for a, b in (A.dates10 or [('','')]) %}<div class="rowi"><input name="dw" value="{{ a }}" placeholder="Кто подаёт: Ученики школы 93"><input name="dd" value="{{ b }}" placeholder="Когда: 25–30 июня" style="max-width:220px"><button type="button" class="x" data-del aria-label="Удалить">×</button></div>{% endfor %}</div><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить срок</button>
+</div>
+<div class="panel"><h3>Свободные места по классам</h3><p class="mut sm">Выводится в «Сведениях», подраздел «Вакантные места». Обновляйте раз в месяц или после зачисления.</p>
+ <div class="rows" data-rows><div class="rowi rowi--h"><span>Класс</span><span>Федеральный</span><span>Петербург</span><span>Местный</span><span>Платно</span><span></span></div>
+ {% for r in (A.vacant or [['','0','0','0','0']]) %}<div class="rowi rowi--v"><input name="vc" value="{{ r[0] }}" placeholder="1 класс"><input name="v1" value="{{ r[1] }}" inputmode="numeric"><input name="v2" value="{{ r[2] }}" inputmode="numeric"><input name="v3" value="{{ r[3] }}" inputmode="numeric"><input name="v4" value="{{ r[4] }}" inputmode="numeric"><button type="button" class="x" data-del aria-label="Удалить">×</button></div>{% endfor %}</div>
+ <button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить класс</button>
+</div>
+<div class="panel"><h3>Лагерь «Стремительный»</h3>
+ <div class="row3">{{ ui.field('l_shift', 'Смена', L.shift, 'Например: Весенняя смена') }}{{ ui.field('l_dates', 'Даты', L.dates, 'Например: 30 марта – 3 апреля') }}{{ ui.field('l_seats', 'Мест', L.seats) }}</div>
+ <div class="row3">{{ ui.field('l_price_full', 'Полная стоимость', L.price_full) }}{{ ui.field('l_price_part', 'Детям работающих граждан', L.price_part) }}{{ ui.field('l_price_free', 'Льготным категориям', L.price_free) }}</div>
+</div>
+{{ ui.savebar() }}
+</form>{% endblock %}

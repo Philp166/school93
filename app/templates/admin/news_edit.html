@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}{{ n.title or 'Новая новость' }}{% endblock %}{% block h1 %}{{ 'Новая новость' if not n.id else 'Новость' }}{% endblock %}
+{% block sub %}<a class="back" href="/admin/news">Все новости</a>{% endblock %}
+{% block body %}
+<form method="post" enctype="multipart/form-data" class="form js-dirty">
+<input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="cover_old" value="{{ n.cover or '' }}">
+<div class="panel">
+ {{ ui.field('title', 'Заголовок', n.title, 'Коротко и по делу, как в заголовке газеты. До 90 знаков.', required=True, attrs='maxlength="140" data-count="90"', wide=True) }}
+ <div class="row3">{{ ui.field('date', 'Дата', n.date, 'Дата в будущем: новость появится на сайте в этот день', type='date') }}{{ ui.select('rubric', 'Рубрика', C.RUBRICS, n.rubric, 'Новости «Кванториума» появятся и в его разделе') }}
+ <label class="f"><span class="f__l">Статус</span><span class="switch"><input type="checkbox" name="published" value="1"{% if n.published %} checked{% endif %}><i></i><em>Опубликовано</em></span><span class="f__h">Без галочки новость видна только здесь</span></label></div>
+ {{ ui.field('lead', 'Одна строка описания', n.lead, 'Показывается в ленте под заголовком. До 140 знаков.', attrs='maxlength="160" data-count="140"', wide=True) }}
+</div>
+<div class="panel"><h3>Главное фото</h3>
+ <div class="upl" data-preview>{% if n.cover %}<img src="{{ n.cover }}" alt="">{% endif %}<label class="drop"><input type="file" name="cover" accept="image/*"><span><b>Выберите фото</b> или перетащите сюда. С телефона тоже можно: сайт сам уменьшит его.</span></label>{% if n.cover %}<label class="chk"><input type="checkbox" name="cover_remove" value="1"> Убрать фото</label>{% endif %}</div>
+</div>
+<div class="panel"><h3>Текст</h3>
+ <div class="tbar"><button type="button" class="a-btn a-btn--ghost a-btn--sm js-h">Подзаголовок</button><label class="a-btn a-btn--ghost a-btn--sm">Вставить фото<input type="file" accept="image/*" class="js-img" hidden></label><span class="mut sm">Пустая строка начинает новый абзац</span></div>
+ <textarea name="body" class="bodyta" rows="14" placeholder="Что произошло, кто участвовал, чем закончилось.">{{ n.body or '' }}</textarea>
+ {{ ui.field('vk', 'Ссылка на альбом ВКонтакте', n.vk, 'Необязательно. Появится кнопкой под текстом.', type='url', wide=True) }}
+</div>
+{{ ui.savebar('Удалить новость «' ~ (n.title or '') ~ '»?' if n.id else '', view=True) }}
+</form>
+{% endblock %}

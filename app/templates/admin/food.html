@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}Питание{% endblock %}{% block h1 %}Питание{% endblock %}
+{% block sub %}{{ ui.routes('food') }}{% endblock %}
+{% block body %}
+<form method="post" action="/admin/food/upload" enctype="multipart/form-data" class="form"><input type="hidden" name="csrf" value="{{ u.csrf }}">
+<div class="panel"><h3>Меню на день</h3><p class="mut sm">Файл сам попадёт в папку /food с правильным именем: {{ pattern.g1 }}, где {date} это дата меню.</p>
+ <div class="row3">{{ ui.field('date', 'Дата меню', today, type='date') }}</div>
+ <div class="row2"><div class="upl"><span class="f__l">7–11 лет</span><label class="drop"><input type="file" name="g1" accept=".xlsx,.xls"><span><b>Выберите файл XLSX</b> или перетащите сюда</span></label></div>
+ <div class="upl"><span class="f__l">12–18 лет</span><label class="drop"><input type="file" name="g2" accept=".xlsx,.xls"><span><b>Выберите файл XLSX</b> или перетащите сюда</span></label></div></div>
+</div>
+<details class="panel"><summary>Двухнедельное меню (меняется раз в сезон)</summary><div class="row2" style="margin-top:14px">
+ {% for label in ['Горячее питание, 7–11 лет','Горячее питание, 12–18 лет','Кадеты, 5–8 классы','Кадеты, 9–11 классы'] %}<div class="upl"><span class="f__l">{{ label }}</span><label class="drop"><input type="file" name="c{{ loop.index }}" accept=".xlsx,.xls"><span><b>Выберите файл</b></span></label></div>{% endfor %}
+</div></details>
+<div class="savebar"><div class="savebar__in"><span></span><div class="savebar__b"><button class="a-btn">Загрузить</button></div></div></div>
+</form>
+<form method="post" action="/admin/food/prices" class="form js-dirty"><input type="hidden" name="csrf" value="{{ u.csrf }}">
+<div class="panel"><h3>Цены</h3><div class="rows" data-rows>{% for a, b in (prices or [('','')]) %}<div class="rowi"><input name="pa" value="{{ a }}" placeholder="Например: Обед, 5–11 классы"><input name="pb" value="{{ b }}" placeholder="217 ₽" style="max-width:160px"><button type="button" class="x" data-del aria-label="Удалить строку">×</button></div>{% endfor %}</div><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить строку</button>
+<div style="margin-top:16px"><button class="a-btn">Сохранить цены</button></div></div></form>
+<h2 class="h2a">Загруженные файлы</h2>
+<div class="list">{% for r in rows %}<a class="li li--link" href="/food/{{ r.filename }}" target="_blank"><span class="kind">XLSX</span><div class="li__m"><b>{{ r.label }}</b><span class="mut">{{ r.filename }}, загружен {{ r.uploaded }}</span></div></a>{% else %}<div class="empty">Файлов пока нет.</div>{% endfor %}</div>
+{% endblock %}

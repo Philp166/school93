@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Документ{% endblock %}{% block h1 %}{{ 'Новый документ' if not d.id else 'Документ' }}{% endblock %}
+{% block sub %}<a class="back" href="/admin/docs">Все документы</a>{% endblock %}
+{% block body %}
+<form method="post" class="form js-dirty"><input type="hidden" name="csrf" value="{{ u.csrf }}">
+<div class="panel">
+ {% if d.url %}<a class="a-btn a-btn--ghost a-btn--sm" href="{{ d.url }}" target="_blank" rel="noopener" style="margin-bottom:14px">Открыть документ</a>{% endif %}
+ {{ ui.field('title', 'Название', d.title, 'Человеческим языком: «Положение о приёме в 1 класс», а не «ссылка» или номер приказа без смысла.', required=True, wide=True) }}
+ {{ ui.field('url', 'Ссылка на документ', d.url, 'Яндекс.Диск, облако Mail или прямая ссылка на файл. Тип определится сам.', type='url', required=True, wide=True) }}
+ <label class="f"><span class="switch"><input type="checkbox" name="main_doc" value="1"{% if d.main_doc %} checked{% endif %}><i></i><em>Главный документ</em></span><span class="f__h">Для заявлений и бланков, которые родитель должен заполнить. На сайте документ выделен цветом и коротко «машет», когда появляется на экране.</span></label>
+</div>
+<div class="panel"><h3>Сейчас на сайте</h3>{% if usage %}<div class="list">{% for url, ptitle, bid, btitle in usage %}<a class="li li--link" href="/admin/pages/edit?url={{ url|urlencode }}&sel={{ ('b:' ~ bid)|urlencode }}"><div class="li__m"><b>{{ ptitle }}</b><span class="mut">{{ url }}{% if btitle %}, блок «{{ btitle }}»{% endif %}</span></div></a>{% endfor %}</div>{% else %}<p class="mut">Пока нигде не стоит. Чтобы показать документ на сайте, откройте нужную страницу в разделе «Страницы», нажмите на блок «Документы» и выберите его из базы.</p>{% endif %}</div>
+{{ ui.savebar(('Удалить документ «' ~ (d.title or '') ~ '» из базы' ~ (' и с ' ~ usage|length ~ ' мест на сайте' if usage else '') ~ '?') if d.id else '') }}
+</form>{% endblock %}

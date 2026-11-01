@@ -1,0 +1,13 @@
+shkola93.ru, www.shkola93.ru {
+	encode zstd gzip
+	@www host www.shkola93.ru
+	redir @www https://shkola93.ru{uri} permanent
+	header /static/* Cache-Control "public, max-age=2592000"
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+	reverse_proxy 127.0.0.1:8000
+}

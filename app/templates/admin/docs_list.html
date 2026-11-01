@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Документы{% endblock %}{% block h1 %}Документы{% endblock %}
+{% block sub %}<p class="mut">База документов. На страницы они ставятся в редакторе страниц, в блоках «Документы».</p>{% endblock %}{% block actions %}<a class="a-btn" href="/admin/docs/new">Добавить документ</a>{% endblock %}
+{% block body %}
+<form class="filters" method="get"><input name="q" value="{{ qs }}" placeholder="Название документа или страницы"><label class="chk"><input type="checkbox" name="unused" value="1"{% if only_unused %} checked{% endif %} onchange="this.form.submit()"> Нигде не стоят ({{ unused }})</label><button class="a-btn a-btn--ghost">Найти</button></form>
+<p class="mut sm" style="margin:-4px 0 10px">Всего {{ total }}{% if qs or only_unused %}, найдено {{ rows|length }}{% endif %}</p>
+<div class="list">{% for d in rows %}<a class="li li--link" href="/admin/docs/{{ d.id }}"><span class="kind">{{ d.kind }}</span><div class="li__m"><b>{{ d.title }}</b><span class="mut">{% if d.used %}На сайте: {{ d.used }} {{ 'место' if d.used == 1 else 'места' if d.used < 5 else 'мест' }}{% else %}<em class="badge">нигде не стоит</em>{% endif %}{% if d.main_doc %}, главный документ{% endif %}</span></div></a>{% else %}<div class="empty">Ничего не найдено.</div>{% endfor %}</div>
+{% endblock %}

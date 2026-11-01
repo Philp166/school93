@@ -1,0 +1,7 @@
+.git
+.venv
+deploy
+tools
+**/__pycache__
+data/news_export.zip
+data/secret.key

@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Страницы{% endblock %}{% block h1 %}Страницы{% endblock %}
+{% block sub %}<p class="mut">Откройте страницу и нажмите на любой блок, чтобы изменить текст. Серые блоки общие: они меняются в своих разделах.</p>{% endblock %}
+{% block body %}
+<input class="pgsearch" placeholder="Найти страницу" oninput="var v=this.value.toLowerCase();document.querySelectorAll('.pg').forEach(function(p){p.style.display=p.textContent.toLowerCase().indexOf(v)>-1?'':'none'})">
+{% for name, urls in groups %}<h2 class="h2a">{{ name }}</h2><div class="list">{% for url in urls %}
+<a class="li li--link pg" href="/admin/pages/edit?url={{ url|urlencode }}"><div class="li__m"><b>{{ titles[url] }}</b><span class="mut">{{ url }}{% if changed.get(url) %}, изменена {{ changed[url].updated|dh }} ({{ changed[url].user }}){% endif %}</span></div></a>{% endfor %}</div>{% endfor %}
+{% endblock %}

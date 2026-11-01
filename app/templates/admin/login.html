@@ -1,0 +1,8 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход | Школа №93</title><link rel="stylesheet" href="/static/css/fonts.css"><link rel="stylesheet" href="/static/css/admin.css"></head>
+<body class="login"><form class="login__box" method="post" action="/admin/login">
+<img src="/static/img/logo93.svg" alt="" class="login__logo"><h1>Вход в админку</h1><p class="mut">Сайт школы №93</p>
+{% if err == 'locked' %}<div class="alert">Слишком много попыток. Попробуйте через 15 минут.</div>{% elif err == 'blocked' %}<div class="alert">Учётная запись заблокирована. Обратитесь к администратору сайта.</div>{% elif err == 'expired' %}<div class="alert">Время на ввод кода вышло. Войдите ещё раз.</div>{% elif err %}<div class="alert">Неверный логин или пароль.</div>{% endif %}
+<label class="f"><span class="f__l">Логин</span><input name="login" autocomplete="username" required autofocus></label>
+<label class="f"><span class="f__l">Пароль</span><input name="password" type="password" autocomplete="current-password" required></label>
+<button class="a-btn" style="width:100%">Войти</button></form></body></html>

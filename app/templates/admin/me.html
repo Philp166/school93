@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Мой профиль{% endblock %}{% block h1 %}{{ x.name }}{% endblock %}
+{% block sub %}<p class="mut">{{ x.login }}, {{ 'администратор' if x.role == 'admin' else 'редактор' }}{% if x.last_login %}, последний вход {{ x.last_login|dh }} {{ x.last_login[11:16] }}{% endif %}</p>{% endblock %}
+{% block body %}
+{% if codes %}<div class="panel newpw"><h3>Новые резервные коды</h3><p>Старые больше не действуют. Сохраните эти отдельно от телефона, они показаны один раз.</p><div class="codes">{% for c in codes %}<code>{{ c }}</code>{% endfor %}</div></div>{% endif %}
+<form method="post" class="form panel"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="act" value="pw"><h3>Сменить пароль</h3>
+<div class="row3">{{ ui.field('old', 'Текущий пароль', '', type='password', required=True) }}{{ ui.field('new', 'Новый пароль', '', 'Не короче 8 символов', type='password', required=True, attrs='minlength="8"') }}{{ ui.field('new2', 'Ещё раз', '', type='password', required=True) }}</div>
+<button class="a-btn">Сменить пароль</button><p class="mut sm" style="margin-top:10px">Входы с других устройств после смены пароля закроются.</p></form>
+<form method="post" class="form panel"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="act" value="codes"><h3>Резервные коды</h3>
+<p class="mut" style="margin-bottom:12px">Осталось кодов: {{ rec_left }}. Если кончаются или вы их потеряли, выпустите новые: введите код из приложения.</p>
+<div class="row3"><label class="f"><span class="f__l">Код из приложения</span><input name="code" inputmode="numeric" maxlength="7" placeholder="000 000" required></label></div>
+<button class="a-btn a-btn--ghost">Выпустить новые коды</button></form>
+<p class="mut sm">Потеряли телефон с приложением-ключом? Войдите по резервному коду и попросите администратора сбросить ключ: при следующем входе подключите его на новом телефоне.</p>
+{% endblock %}

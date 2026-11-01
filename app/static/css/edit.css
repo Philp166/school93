@@ -1,0 +1,32 @@
+/* редактор: блоки, панель действий, «+», правка текста на странице */
+html.s93-edit [data-eb]{position:relative;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .15s;border-radius:inherit}
+html.s93-edit [data-eb]:hover{outline-color:rgba(22,84,232,.35)}
+html.s93-edit [data-eb].eb-sel,html.s93-edit [data-eb].eb-typing{outline-color:#1654E8}
+html.s93-edit [data-eb].eb-flash{animation:ebflash 1.6s ease-out}
+@keyframes ebflash{0%{outline-color:#1654E8;box-shadow:0 0 0 6px rgba(22,84,232,.25)}100%{outline-color:transparent;box-shadow:0 0 0 0 rgba(22,84,232,0)}}
+html.s93-edit .eb-tb{position:absolute;top:10px;right:10px;z-index:30;display:flex;align-items:center;gap:3px;background:#0A1F33;border-radius:12px;padding:4px;opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .15s,transform .15s;font:600 13px/1 Manrope,sans-serif}
+html.s93-edit [data-eb]:hover>.eb-tb,html.s93-edit [data-eb].eb-sel>.eb-tb{opacity:1;pointer-events:auto;transform:none}
+html.s93-edit [data-eb] [data-eb]:hover>.eb-tb{z-index:31}
+html.s93-edit .eb-tb__l{color:rgba(255,255,255,.55);padding:0 8px;font-weight:700;font-size:12px;white-space:nowrap}
+html.s93-edit .eb-tb button{height:30px;min-width:30px;padding:0 10px;border:0;border-radius:8px;background:none;color:#fff;font:700 13px/1 Manrope,sans-serif;cursor:pointer;white-space:nowrap}
+html.s93-edit .eb-tb button:hover{background:rgba(255,255,255,.14)}
+html.s93-edit .eb-tb button[data-danger]:hover{background:#D93838}
+html.s93-edit .eb-src{position:absolute;left:10px;top:10px;z-index:30;font:800 11px/1 Manrope,sans-serif;color:#fff;background:#069676;padding:6px 9px;border-radius:7px;opacity:0;transition:opacity .15s;pointer-events:none}
+html.s93-edit [data-eb]:hover>.eb-src{opacity:1}
+html.s93-edit .eb-pop{position:absolute;right:0;top:42px;width:290px;background:#fff;color:#0A1F33;border-radius:16px;box-shadow:0 18px 50px rgba(10,31,51,.25);padding:6px;display:none}
+html.s93-edit .eb-pop.on{display:block}
+html.s93-edit .eb-pop button{display:block;width:100%;height:auto;text-align:left;padding:10px 12px;border-radius:10px;color:#0A1F33}
+html.s93-edit .eb-pop button:hover{background:#F2F3F5}
+html.s93-edit .eb-pop b{display:block;font-size:14px;margin-bottom:3px}html.s93-edit .eb-pop span{font-size:12px;font-weight:600;color:rgba(10,31,51,.56)}
+html.s93-edit .eb-plus{position:relative;display:block;width:100%;height:0;border:0;background:none;padding:0;margin:0;z-index:29}
+html.s93-edit .eb-plus span{position:absolute;left:50%;top:-17px;width:34px;height:34px;border-radius:17px;background:#1654E8;color:#fff;font:700 22px/34px Manrope,sans-serif;text-align:center;transform:translateX(-50%) scale(.6);opacity:0;transition:.15s;box-shadow:0 4px 14px rgba(22,84,232,.4);cursor:pointer}
+html.s93-edit .eb-plus::before{content:"";position:absolute;left:0;right:0;top:-22px;height:44px}
+html.s93-edit .eb-plus:hover span,html.s93-edit [data-eb]:hover+.eb-plus span{opacity:1;transform:translateX(-50%) scale(1)}
+html.s93-edit .eb-empty .eb-plus span{opacity:1;transform:translateX(-50%) scale(1)}
+html.s93-edit [data-f]{cursor:text;border-radius:6px;transition:box-shadow .15s}
+html.s93-edit [data-f]:hover{box-shadow:0 0 0 2px rgba(22,84,232,.3)}
+html.s93-edit [data-f]:focus{outline:none;box-shadow:0 0 0 2px #1654E8;background:rgba(255,255,255,.06)}
+html.s93-edit [data-f]:empty::before{content:attr(data-ph);opacity:.4}
+html.s93-edit .eb-broken{margin:24px 0;padding:22px;border-radius:18px;background:#FDECEC;color:#B42318;font:600 15px/1.4 Manrope,sans-serif}
+html.s93-edit .eb-empty{margin:20px 0;padding:22px 22px 30px;border-radius:18px;background:#EEF3FE;color:#1654E8;font:600 15px/1.4 Manrope,sans-serif;border:2px dashed rgba(22,84,232,.35)}
+html.s93-edit .hero h1 .ln>span{transform:none!important;animation:none!important}

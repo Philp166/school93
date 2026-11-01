@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: school93
+    env: docker
+    plan: free
+    healthCheckPath: /

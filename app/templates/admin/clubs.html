@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Кружки{% endblock %}{% block h1 %}Кружки и секции{% endblock %}
+{% block sub %}{{ ui.routes('clubs') }}{% endblock %}
+{% block body %}
+{% set e = (rows|selectattr('id','equalto', edit|int)|list or [{}])[0] if edit else {} %}
+<form method="post" class="form js-dirty panel"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="id" value="{{ e.id or '' }}">
+<h3>{{ 'Изменить: ' ~ e.title if e.id else 'Добавить объединение' }}</h3>
+<div class="row3">{{ ui.field('title', 'Название', e.title, required=True) }}{{ ui.select('direction', 'Направленность', C.DIRECTIONS, e.direction) }}{{ ui.field('age', 'Возраст', e.age, 'Например: 7–11 лет') }}</div>
+<div class="row3">{{ ui.select('building', 'Корпус', [('', 'Оба корпуса'), ('Школьная, 19', 'Школьная, 19'), ('Первомайская, 30', 'Первомайская, 30')], e.building) }}<label class="f"><span class="f__l">Педагог</span><input name="teacher" value="{{ e.teacher or '' }}" list="tch"><datalist id="tch">{% for t in teachers %}<option value="{{ t }}">{% endfor %}</datalist><span class="f__h">Начните вводить фамилию</span></label>{{ ui.field('schedule', 'Расписание', e.schedule, 'Например: вт, чт 15:00') }}</div>
+<div class="btns-a"><button class="a-btn">{{ 'Сохранить' if e.id else 'Добавить' }}</button>{% if e.id %}<a class="a-btn a-btn--ghost" href="/admin/clubs">Отмена</a><button class="a-btn a-btn--danger" name="delete" value="1" formnovalidate data-confirm="Удалить «{{ e.title }}»?">Удалить</button>{% endif %}</div>
+</form>
+<div class="list">{% for c in rows %}<a class="li li--link" href="/admin/clubs?edit={{ c.id }}"><span class="kind">{{ c.direction[:4] }}</span><div class="li__m"><b>{{ c.title }}</b><span class="mut">{{ c.teacher }}{% if c.age %}, {{ c.age }}{% endif %}{% if c.building %}, {{ c.building }}{% endif %}</span></div></a>{% else %}<div class="empty">Пока пусто.</div>{% endfor %}</div>
+{% endblock %}

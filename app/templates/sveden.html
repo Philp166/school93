@@ -1,0 +1,27 @@
+{% set C = ctx.C %}{% set s = ctx.p.sveden %}
+{% macro row(label, value, prop='') %}<tr><td>{{ label }}</td><td{% if prop %} itemprop="{{ prop }}"{% endif %}>{{ value }}</td></tr>{% endmacro %}
+
+{% if s == 'common' %}
+<section><h2>Наименование и дата создания</h2><div class="tbl-box"><table class="tbl"><tbody>
+{{ row('Полное наименование', C.full_name, 'fullName') }}{{ row('Сокращённое наименование', C.short_name, 'shortName') }}{{ row('Дата создания', C.created, 'regDate') }}{{ row('Филиалы и представительства', 'Отсутствуют') }}
+</tbody></table></div></section>
+<section><h2>Учредитель</h2><div class="tbl-box" itemprop="uchredLaw"><table class="tbl"><tbody>{% for a, v in C.founders %}<tr><td itemprop="nameUchred">{{ a }}</td><td itemprop="addressUchred">{{ v|replace('<br>', '\n')|e|replace('\n', '<br>'|safe) }}</td></tr>{% endfor %}</tbody></table></div></section>
+<section><h2>Место нахождения и контакты</h2><div class="tbl-box"><table class="tbl"><tbody>
+{{ row('Адрес', C.legal_address, 'address') }}{{ row('Места осуществления образовательной деятельности', C.buildings|map(attribute='address_full')|join('; '), 'addressPlace') }}
+{{ row('Режим и график работы', C.hours + '. Приёмный день: ' + C.reception, 'workTime') }}
+<tr><td>Телефон</td><td itemprop="telephone">{% for bl in C.buildings %}{{ bl.phone_line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td></tr>{{ row('Электронная почта', C.email, 'email') }}
+</tbody></table></div></section>
+{% elif s == 'managers' %}
+<section><h2>Руководство</h2><div class="tbl-box"><table class="tbl"><tbody>{% for x in ctx.people('admin') %}<tr itemprop="rucovodstvo"><td itemprop="fio">{{ x.name }}</td><td><span itemprop="post">{{ x.position }}</span>{% if x.phone %}<br><span itemprop="telephone">{{ x.phone }}</span>{% endif %}{% if x.email %}<br><span itemprop="email">{{ x.email }}</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></section>
+{% elif s == 'employees' %}
+<section><h2>Педагогический состав</h2>{% set ppl = ctx.people('teacher') %}{% if ppl %}<div class="svg-wrap"><div class="tbl-box"><table class="tbl"><tbody>{% for x in ppl %}<tr itemprop="teachingStaff"><td itemprop="fio">{{ x.name }}</td><td><span itemprop="post">{{ x.position }}</span>{% if x.subjects %}<br>Предметы: <span itemprop="teachingDiscipline">{{ x.subjects }}</span>{% endif %}{% if x.edu %}<br>Образование: <span itemprop="teachingLevel">{{ x.edu }}</span>{% endif %}{% if x.qual %}<br>Квалификация: <span itemprop="teachingQual">{{ x.qual }}</span>{% endif %}{% if x.experience %}<br>Стаж: <span itemprop="specExperience">{{ x.experience }}</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div>{% else %}<p class="lead">Список заполняется в админке: раздел «Люди», метка «Педагогический состав».</p>{% endif %}
+<p class="sm mut" style="margin-top:16px">Персональные данные публикуются с согласия работников по Федеральному закону №152-ФЗ.</p></section>
+{% elif s == 'vacant' %}
+<section><h2>Вакантные места для приёма (перевода)</h2><div class="svg-wrap"><div class="tbl-box"><table class="tbl"><tbody>
+<tr><td>Класс</td><td>Федеральный бюджет / бюджет Петербурга / местный бюджет / платно</td></tr>
+{% for r in ctx.A.vacant %}<tr itemprop="vacant"><td itemprop="eduCode">{{ r[0] }}</td><td><span itemprop="numberBFVacant">{{ r[1] }}</span> / <span itemprop="numberBRVacant">{{ r[2] }}</span> / <span itemprop="numberBMVacant">{{ r[3] }}</span> / <span itemprop="numberPVacant">{{ r[4] }}</span></td></tr>{% endfor %}
+</tbody></table></div></div></section>
+{% elif s == 'catering' %}
+<section><h2>Организация питания</h2><p class="lead">Меню, цены и льготы на странице <a href="/roditelyam/pitanie" style="text-decoration:underline">«Питание»</a>. Файлы меню для мониторинга лежат в папке <a href="/food/" style="text-decoration:underline">/food</a>.</p></section>
+{% endif %}
+

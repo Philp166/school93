@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block title %}Пользователи{% endblock %}{% block h1 %}Пользователи{% endblock %}
+{% block sub %}<p class="mut">Редактор ведёт сайт. Администратор ещё управляет пользователями. Вход у всех подтверждается кодом из приложения-ключа на телефоне.</p>{% endblock %}
+{% block body %}
+{% if newpw %}<div class="panel newpw"><h3>{{ 'Пользователь добавлен' if ok == 'added' else 'Новый пароль выдан' }}</h3><p>Передайте человеку логин и временный пароль. При первом входе он подключит приложение-ключ, пароль потом сменит в профиле.</p>
+<div class="newpw__row"><span>Логин</span><code>{{ newlogin }}</code><span>Пароль</span><code>{{ newpw }}</code></div><p class="mut sm">Пароль показан один раз. Закроете страницу — придётся выдать новый.</p></div>{% endif %}
+<details class="panel"{% if not rows|length > 1 %} open{% endif %}><summary>Добавить пользователя</summary>
+<form method="post" class="form" style="margin-top:14px"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="act" value="add">
+<div class="row3">{{ ui.field('name', 'Имя', '', 'Как подписывать в журнале изменений', required=True) }}{{ ui.field('login', 'Логин', '', 'Латиницей, например ivanova', required=True) }}{{ ui.select('role', 'Роль', [('editor','Редактор'),('admin','Администратор')], 'editor') }}</div>
+<button class="a-btn">Добавить и выдать пароль</button></form></details>
+<div class="list">{% for x in rows %}<div class="li ulist{{ ' ulist--off' if not x.active }}"><span class="li__ava">{{ x.name[:1] }}</span><div class="li__m"><b>{{ x.name }}{% if x.id == u.id %} <em class="badge">это вы</em>{% endif %}{% if not x.active %} <em class="badge">заблокирован</em>{% endif %}</b>
+<span class="mut">{{ x.login }}, {{ 'администратор' if x.role == 'admin' else 'редактор' }}, {% if x.totp_on %}ключ подключён{% if x.rec_left < 3 %}, резервных кодов: {{ x.rec_left }}{% endif %}{% else %}<em class="badge">ключ подключит при входе</em>{% endif %}{% if x.last_login %}, входил {{ x.last_login|dh }}{% else %}, ещё не входил{% endif %}</span></div>
+<form method="post" class="uacts"><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="id" value="{{ x.id }}">
+ {% if x.id != u.id %}<select name="role" onchange="this.form.act.value='role';this.form.submit()"><option value="editor"{% if x.role == 'editor' %} selected{% endif %}>Редактор</option><option value="admin"{% if x.role == 'admin' %} selected{% endif %}>Администратор</option></select>{% endif %}
+ <input type="hidden" name="act" value="">
+ <button class="a-btn a-btn--ghost a-btn--sm" onclick="this.form.act.value='newpw'" data-confirm="Выдать {{ x.name }} новый пароль? Старый перестанет работать.">Новый пароль</button>
+ {% if x.totp_on %}<button class="a-btn a-btn--ghost a-btn--sm" onclick="this.form.act.value='reset2fa'" data-confirm="Сбросить приложение-ключ у {{ x.name }}? При следующем входе он подключит его заново. Нужно, если телефон потерян.">Сбросить ключ</button>{% endif %}
+ {% if x.id != u.id %}{% if x.active %}<button class="a-btn a-btn--ghost a-btn--sm" onclick="this.form.act.value='block'" data-confirm="Заблокировать {{ x.name }}? Вход закроется сразу.">Заблокировать</button>{% else %}<button class="a-btn a-btn--ghost a-btn--sm" onclick="this.form.act.value='unblock'">Разблокировать</button>{% endif %}
+ <button class="a-btn a-btn--danger a-btn--sm" onclick="this.form.act.value='delete'" data-confirm="Удалить пользователя {{ x.name }}? Его правки в журнале останутся.">Удалить</button>{% endif %}
+</form></div>{% endfor %}</div>
+{% endblock %}

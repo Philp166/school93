@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}Контакты школы{% endblock %}{% block h1 %}Контакты школы{% endblock %}
+{% block sub %}{{ ui.routes('contacts') }}{% endblock %}
+{% block body %}
+<form method="post" class="form js-dirty"><input type="hidden" name="csrf" value="{{ u.csrf }}">
+<div class="panel"><h3>Корпуса</h3><div class="row2">{% for i in [0,1] %}{% set b = (Cs.buildings or [{}, {}])[i] %}<div class="sub">
+ <b>Корпус {{ i+1 }}</b>
+ {{ ui.field('b%d_address'|format(i), 'Короткий адрес', b.address, 'Для меню и подвала: «Школьная, 19»') }}
+ {{ ui.field('b%d_full'|format(i), 'Полный адрес', b.address_full, 'Для карты: «Школьная ул., 19»') }}
+ {{ ui.field('b%d_phone'|format(i), 'Телефон секретаря', b.phone) }}
+ {{ ui.field('b%d_room'|format(i), 'Кабинет секретаря', b.room) }}
+ <div class="row2">{{ ui.field('b%d_xa'|format(i), 'Доп. строка: подпись', (b.extra or ['',''])[0], 'Например: Факс') }}{{ ui.field('b%d_xb'|format(i), 'Доп. строка: значение', (b.extra or ['',''])[1]) }}</div>
+ {{ ui.field('b%d_route'|format(i), 'Схема безопасного подхода, ссылка', b.safe_route, type='url') }}
+</div>{% endfor %}</div></div>
+<div class="panel"><h3>Общие контакты и приём</h3>
+ <div class="row3">{{ ui.field('email', 'Почта', Cs.email, type='email') }}{{ ui.field('hours', 'Режим работы', Cs.hours) }}{{ ui.field('reception', 'Приёмный день', Cs.reception) }}</div>
+ <div class="row3">{{ ui.field('director_day', 'Приём директора: когда', Cs.director_day) }}{{ ui.field('director_time', 'Приём директора: время', Cs.director_time) }}{{ ui.field('director_place', 'Приём директора: где', Cs.director_place) }}</div>
+ <div class="row3">{{ ui.field('hotline', 'Горячая линия школы', Cs.hotline) }}</div>
+</div>
+<div class="panel"><h3>Отделение дополнительного образования</h3><div class="row3">{{ ui.field('o_hours', 'Занятия', O.hours) }}{{ ui.field('o_reception', 'Приём родителей', O.reception) }}{{ ui.field('o_phone', 'Телефон руководителя', O.phone) }}</div></div>
+<details class="panel"><summary>Для «Сведений»: наименование, учредитель, реквизиты</summary><div style="margin-top:14px">
+ {{ ui.field('full_name', 'Полное наименование', Cs.full_name, wide=True) }}{{ ui.field('short_name', 'Сокращённое наименование', Cs.short_name, wide=True) }}
+ <div class="row2">{{ ui.field('created', 'Дата создания', Cs.created) }}{{ ui.field('legal_address', 'Юридический адрес', Cs.legal_address) }}</div>
+ <span class="f__l">Учредитель</span><div class="rows" data-rows>{% for a, b in (Cs.founders or [('','')]) %}<div class="rowi"><input name="fa" value="{{ a }}" placeholder="Орган"><input name="fb" value="{{ b }}" placeholder="Руководитель и адрес"><button type="button" class="x" data-del>×</button></div>{% endfor %}</div><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить строку</button>
+ <span class="f__l" style="margin-top:16px;display:block">Реквизиты</span><div class="rows" data-rows>{% for a, b in (Cs.requisites or [('','')]) %}<div class="rowi"><input name="ra" value="{{ a }}"><input name="rb" value="{{ b }}"><button type="button" class="x" data-del>×</button></div>{% endfor %}</div><button type="button" class="a-btn a-btn--ghost a-btn--sm" data-add>Добавить строку</button>
+</div></details>
+<details class="panel"><summary>Виджет обратной связи Госуслуг</summary><div style="margin-top:14px">{{ ui.field('pos_widget', 'Код виджета из личного кабинета ПОС', Cs.pos_widget, 'Вставьте код целиком. Пока поле пустое, в подвале стоит обычная кнопка на Госуслуги.', type='textarea', attrs='rows="4"', wide=True) }}</div></details>
+{{ ui.savebar() }}
+</form>{% endblock %}

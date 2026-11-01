@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block title %}{{ page.title }}{% endblock %}{% block bodycls %}ed-mode{% endblock %}
+{% block topmid %}<div class="pick"><button type="button" class="pick__b" id="pickB">{{ page.title }}{% if sec_name and sec_name != page.title %} <span>{{ sec_name }}</span>{% endif %} ▾</button>
+ <div class="pick__m" id="pickM"><input class="pick__q" placeholder="Найти страницу">{% for gname, urls in groups %}<h5>{{ gname }}</h5>{% for x in urls %}<a href="/admin/pages/edit?url={{ x|urlencode }}"{% if x == url %} class="on"{% endif %} data-t="{{ titles[x]|lower }}">{{ titles[x] }}</a>{% endfor %}{% endfor %}<button type="button" class="pick__reset" onclick="S93Edit.reset()">Вернуть исходный вид этой страницы</button></div></div>{% endblock %}
+{% block topact %}<span class="saved" id="saved"><i></i><span>Все изменения сохранены</span></span>
+<div class="seg2" id="dev"><button type="button" class="on" data-w="">Компьютер</button><button type="button" data-w="390">Телефон</button></div>
+<a class="a-btn a-btn--ghost a-btn--sm" href="{{ url }}" target="_blank">Открыть на сайте</a>{% endblock %}
+{% block mainhead %}{% endblock %}
+{% block body %}
+<div class="ed" data-url="{{ url }}"><div class="ed__canvas" id="canvas"><iframe id="edFrame" src="{{ url }}{{ '&' if '?' in url else '?' }}edit=1" title="Страница для правки"></iframe></div></div>
+<aside class="drawer" id="drawer" aria-label="Настройки блока"><div class="drawer__in" id="edForm"></div></aside>
+<div class="modal" id="catalog" hidden><div class="modal__box modal__box--wide"><div class="modal__head"><h3>Добавить блок</h3><button type="button" class="x" data-modal-close>×</button></div>
+ <div class="cat">{% for key, title, desc, _ in catalog %}<button type="button" class="cat__i cat__i--{{ key }}" data-type="{{ key }}"><i></i><b>{{ title }}</b><span>{{ desc }}</span></button>{% endfor %}</div></div></div>
+<div class="modal" id="library" hidden><div class="modal__box"><div class="modal__head"><h3 id="libTitle">Добавить</h3><button type="button" class="x" data-modal-close>×</button></div>
+ <div class="seg-mini lib-tabs"><button type="button" class="on" data-lt="find">Найти в базе</button><button type="button" data-lt="new">Создать новую запись</button></div>
+ <div class="lib-pane" data-lp="find"><input class="lib-q" placeholder="Начните вводить фамилию, название…"><div class="lib-list"></div></div>
+ <div class="lib-pane" data-lp="new" hidden>
+  <form class="form lib-new" data-k="people"><label class="f"><span class="f__l">ФИО</span><input name="name" required></label><label class="f"><span class="f__l">Должность</span><input name="position"></label><div class="row2"><label class="f"><span class="f__l">Телефон</span><input name="phone"></label><label class="f"><span class="f__l">Почта</span><input name="email" type="email"></label></div><label class="f"><span class="f__l">Корпус</span><select name="building"><option value="">Не указан</option><option>Школьная, 19</option><option>Первомайская, 30</option></select></label><p class="f__h">Фото и остальное можно добавить позже в разделе «Люди».</p><button class="a-btn">Создать и добавить</button></form>
+  <form class="form lib-new" data-k="docs" hidden><label class="f"><span class="f__l">Название</span><input name="title" required></label><label class="f"><span class="f__l">Ссылка на документ</span><input name="url" type="url" required placeholder="https://disk.yandex.ru/…"></label><label class="chk"><input type="checkbox" name="main_doc" value="1"> Главный документ (заявление, бланк)</label><div style="margin-top:12px"><button class="a-btn">Создать и добавить</button></div></form>
+  <form class="form lib-new" data-k="clubs" hidden><label class="f"><span class="f__l">Название</span><input name="title" required></label><div class="row2"><label class="f"><span class="f__l">Направленность</span><select name="direction">{% for d in C.DIRECTIONS %}<option>{{ d }}</option>{% endfor %}</select></label><label class="f"><span class="f__l">Возраст</span><input name="age" placeholder="7–11 лет"></label></div><div class="row2"><label class="f"><span class="f__l">Педагог</span><input name="teacher"></label><label class="f"><span class="f__l">Расписание</span><input name="schedule"></label></div><button class="a-btn">Создать и добавить</button></form>
+  <p class="lib-err alert" hidden></p>
+ </div></div></div>
+<form method="post" action="/admin/pages/reset" id="resetForm" hidden><input type="hidden" name="csrf" value="{{ u.csrf }}"><input type="hidden" name="url" value="{{ url }}"></form>
+<div class="toast2" id="toast2"><span></span><button type="button" hidden>Вернуть</button></div>
+<script>window.EDIT_URL={{ url|tojson }};window.TYPE_NAMES={{ names|tojson }};</script>
+<script src="/static/js/editor.js"></script>
+{% endblock %}
